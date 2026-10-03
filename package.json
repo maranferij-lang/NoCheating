@@ -1,0 +1,33 @@
+{
+  "name": "nocheating",
+  "private": true,
+  "version": "0.1.0",
+  "description": "NoCheating — прототип системи онлайн-прокторингу для українських ЗВО",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "postinstall": "node scripts/setup-assets.mjs",
+    "dev": "concurrently -k -n server,web -c blue,green \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:https": "concurrently -k -n server,web -c blue,green \"npm:dev:server\" \"npm -w @nocheating/web run dev:https\"",
+    "dev:server": "npm -w @nocheating/server run dev",
+    "dev:web": "npm -w @nocheating/web run dev",
+    "build": "npm -w @nocheating/web run build",
+    "start": "npm -w @nocheating/server run start",
+    "seed": "npm -w @nocheating/server run seed",
+    "typecheck": "npm -w @nocheating/core run typecheck && npm -w @nocheating/server run typecheck && npm -w @nocheating/web run typecheck",
+    "test": "npm -w @nocheating/core run test && npm -w @nocheating/server run test",
+    "test:e2e": "playwright test",
+    "fixtures": "node e2e/make-fixtures.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "concurrently": "^9.2.4",
+    "typescript": "~5.9.3"
+  }
+}

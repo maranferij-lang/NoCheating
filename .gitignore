@@ -1,0 +1,15 @@
+node_modules/
+dist/
+data/
+*.log
+.DS_Store
+coverage/
+playwright-report/
+test-results/
+e2e/fixtures/*.y4m
+e2e/fixtures/*.jpg
+e2e/fixtures/*.png
+apps/web/public/models/
+apps/web/public/mediapipe/
+.env
+.env.local
