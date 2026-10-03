@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+data
+dist
+**/dist
+e2e/fixtures
+test-results
+playwright-report
+.git

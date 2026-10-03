@@ -1,0 +1,13 @@
+services:
+  nocheating:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PROCTOR_PIN: "1234"          # змініть перед показом
+      # PUBLIC_URL: "https://your-domain.example"   # для QR-коду телефона, якщо за проксі
+    volumes:
+      - nocheating-data:/data
+    restart: unless-stopped
+volumes:
+  nocheating-data:
