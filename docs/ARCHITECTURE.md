@@ -47,8 +47,8 @@ errors in your own files. Do not commit (the architect commits).
 - Gaze coords normalised to the student's screen; outside [0,1] = off-screen.
 - Head pose: `headPoseFromMatrix` defines the convention; everything else uses it.
 - Severity → colour: info slate, low sky, medium amber, high orange, critical red (`ui/Badge.tsx`).
-- Ukrainian copy: polite "ви" form for students; concise, calm, non-accusatory ("підозра", "потребує
-  перегляду", never "списувач"). The system never says a student cheated; a human decides.
+- Ukrainian copy: polite "ви" form for students; concise, calm, non-accusatory ("підозра" = suspicion, "потребує
+  перегляду" = needs review, never "списувач" = cheater). The system never says a student cheated; a human decides.
 - Accessibility: semantic HTML, labels, focus states, keyboard navigation, aria-live for status.
 - Responsive: student and phone pages must work on a 360px-wide phone; proctor dashboard ≥ 1024px
   primary but should not break on tablets.
@@ -195,26 +195,27 @@ session). Use a consistent `StudentLayout` (logo, exam title, Stepper). Details:
 - Consent: what is recorded for THIS exam's policy, what is never done (no emotion recognition, no
   audio recording, no room scan unless policy, no automatic penalties — a human decides), retention,
   who sees the data, rights (access, deletion, appeal), alternative (in-person exam via the dean's
-  office), accommodations checkbox + note. Required checkboxes; "Не погоджуюсь" → alternative screen.
+  office), accommodations checkbox + note. Required checkboxes; "Не погоджуюсь" (I do not agree) → alternative screen.
 - System check: camera, models loading with progress, face & lighting quality, benchmark → analysisHz,
   screens (block if extended and policy requires single monitor, with instructions), browser features,
   network, virtual camera / VM warnings, microphone if VAD. Then `api.submitDevice`.
 - Identity: selfie with face-guide oval + LivenessCheck (if policy) → capture + descriptor; ID card
   capture via camera (with framing guide) or file upload → face on card → distance → match result;
-  graceful fallbacks (manualReviewRequired). A disabled "Підтвердити через Дія" button labelled
-  "Заплановано" with an explanation (integration needs an agreement with Мінцифри). Upload images,
+  graceful fallbacks (manualReviewRequired). A disabled "Підтвердити через Дія" (Confirm via Diia) button labelled
+  "Заплановано" (Planned) with an explanation (integration needs an agreement with the Ministry of Digital
+  Transformation, Мінцифри). Upload images,
   `api.submitIdentity` (include descriptor).
 - Calibration: explanation → CalibrationOverlay → quality result with tips; retry; accommodations may skip.
 - Phone (only if policy.phoneCamera ≠ 'off'): `api.phonePair` → QR (qrcode) for the absolute URL;
   placement tips; wait for `phoneConnected` (poll studentView); warn when the page is on localhost
   (phone cannot reach it → use LAN IP over HTTPS or a tunnel, see README). Optional → skippable.
-- Ready: checklist, rules, screen share (if policy), fullscreen (if policy), "Почати іспит" → `api.startExam`.
-- Live exam: header (title, remaining timer, sync/queue indicator, red "Іде запис" dot, pause button),
+- Ready: checklist, rules, screen share (if policy), fullscreen (if policy), "Почати іспит" (Start exam) → `api.startExam`.
+- Live exam: header (title, remaining timer, sync/queue indicator, red "Іде запис" (Recording) dot, pause button),
   question navigator (one question per screen, grid of numbers with answered state), autosave answers
   (debounced `api.saveAnswers` + `engine.emit({type:'question_answered', ...})`), small mirrored
-  self-view with face status, collapsible "Що зараз фіксується" transparency panel (plain-language
+  self-view with face status, collapsible "Що зараз фіксується" (What is being recorded now) transparency panel (plain-language
   recent events), proctor messages (modal), offline banner, fullscreen-exit overlay, pause modal
-  (reason: повітряна тривога / відключення світла / інше) → `api.pause` + `engine.pause` → calm pause
+  (reason: повітряна тривога = air raid alert / відключення світла = power outage / інше = other) → `api.pause` + `engine.pause` → calm pause
   screen with elapsed pause timer → resume = quick face re-check → `api.resume` + `engine.resume`;
   submit confirm (unanswered count) → `engine.stop` → `api.submitExam`; auto-submit at time-up or on
   `force_submit`. Survive reloads (re-open camera; ask to re-share screen).
@@ -226,11 +227,11 @@ session). Use a consistent `StudentLayout` (logo, exam title, Stepper). Details:
 
 ## apps/web/src/proctor (proctor builder)
 
-`LoginPage.tsx` (name + PIN, demo hint "PIN для демо: 1234") and `ProctorApp.tsx` (layout + nested
+`LoginPage.tsx` (name + PIN, demo hint "PIN для демо: 1234" (Demo PIN: 1234)) and `ProctorApp.tsx` (layout + nested
 routes `''`, `exams/new`, `exams/:id`, `exams/:id/edit`, `sessions/:id`, `sessions/:id/report`;
 redirect to login without token).
 
-- Dashboard: exam cards with counts; "Створити іспит"; "Завантажити демо-дані" (`api.seedDemo`).
+- Dashboard: exam cards with counts; "Створити іспит" (Create exam); "Завантажити демо-дані" (Load demo data) (`api.seedDemo`).
 - Exam editor: title, description, duration, status, policy preset + detailed toggles (POLICY_LABELS),
   question editor (single/multi/text, options, correct answers, points; add/remove/reorder).
 - Exam page: big join code + copy + `/join/CODE` link + QR; open/close toggle; tabs "Студенти"
@@ -253,7 +254,7 @@ redirect to login without token).
 
 ## apps/web/src/landing + src/lab (lab builder)
 
-- Home: hero ("Доброчесний онлайн-іспит без тотального стеження"), three entry cards (student /join,
+- Home: hero ("Доброчесний онлайн-іспит без тотального стеження" = Honest online exam without total surveillance), three entry cards (student /join,
   teacher /proctor, Lab /lab), how it works (steps), principles (людина вирішує; мінімізація; прозорість;
   стійкість до тривог і блекаутів; українське право і GDPR), honest "Прототип" disclaimer, footer.
 - How it works / transparency (`/how`): what is collected and why (from EVENT_META), what is never

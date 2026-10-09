@@ -2,7 +2,7 @@
   "name": "nocheating",
   "private": true,
   "version": "0.1.0",
-  "description": "NoCheating — прототип системи онлайн-прокторингу для українських ЗВО",
+  "description": "NoCheating: prototype online proctoring system for Ukrainian universities",
   "type": "module",
   "workspaces": [
     "packages/*",

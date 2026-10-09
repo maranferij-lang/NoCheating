@@ -1,64 +1,66 @@
-# Слабкі місця прототипу і як їх виправити
+# Weaknesses of the prototype and how to fix them
 
-Цей документ потрібен, щоб чесно відповідати на запитання під час показу. Прототип показує, що
-ідея технічно здійсненна у звичайному браузері, без встановлення програм. Він не є готовим продуктом
-для реальних іспитів.
+This document exists so that questions during a demo can be answered honestly. The prototype shows
+that the idea is technically feasible in a regular browser with nothing to install. It is not a
+finished product for real exams.
 
-## Коротка відповідь: чи це робоча ідея?
+## Short answer: is this a working idea?
 
-**Так, як інструмент стримування і збору доказів для людини.** Студент знає, що запис іде і що
-повторювані погляди в одну точку, телефон у кадрі чи друга людина будуть показані викладачу. Викладач
-отримує не 90 хвилин відео на кожного, а список підозрілих моментів з кліпами.
+**Yes, as a deterrence and evidence-gathering tool for a human.** The student knows that recording is
+on and that repeated glances at one spot, a phone in frame or a second person will be shown to the
+instructor. Instead of 90 minutes of video per student, the instructor gets a list of suspicious
+moments with clips.
 
-**Ні, як автоматичний детектор списування.** Вебкамера не бачить усього, погляд вимірюється з
-похибкою, а розумний порушник завжди знайде сліпу зону. Тому система ніколи не виносить вердикт, а
-рішення завжди за людиною. Найкращий результат дає поєднання прокторингу з правильним дизайном
-завдань: рандомізація питань, обмеження часу, усна співбесіда за підозри.
+**No, as an automatic cheating detector.** A webcam does not see everything, gaze is measured with
+an error margin, and a clever violator will always find a blind spot. That is why the system never
+issues a verdict and the decision always belongs to a human. The best result comes from combining
+proctoring with sound assignment design: question randomization, time limits, and an oral interview
+when there is suspicion.
 
-## Технічні обмеження
+## Technical limitations
 
-| Проблема | Чому це важливо | Як виправити у продукті |
+| Problem | Why it matters | How to fix it in the product |
 |---|---|---|
-| **Клієнту не можна повністю довіряти.** Аналіз іде в браузері студента, тож технічно підготовлений студент може підмінити код або камеру. | Події можна підробити або приховати. | Сервер повторно аналізує випадкові кадри з відео (вибірковий аудит). Телеметрію звіряють із записом. Друга камера з телефона. Випадкові «живі» перевірки під час іспиту. Опція Safe Exam Browser для суворих іспитів. |
-| **Віртуальні камери і заздалегідь записане відео.** | Можна показати «чесне» відео замість живого. | Евристика за назвою пристрою вже є. Далі: випадкові челенджі (поверніть голову, покажіть пальці), аналіз артефактів на сервері, друга камера. |
-| **Точність погляду через вебкамеру обмежена.** Кілька градусів у кращому разі; гірше в окулярах, при поганому світлі, на дешевих камерах. | Не відрізнити «дивиться на клавіатуру» від «дивиться на телефон біля клавіатури». | Погляд є лише одним із сигналів. Персональне калібрування, запасний сигнал за поворотом голови, повторне калібрування під час іспиту. Пороги налаштовувати на розмічених даних пілоту. |
-| **Хибні спрацювання.** Хтось думає, дивлячись у стелю. Хтось нейровідмінний. Хтось в укритті з родиною. | Несправедливі підозри і апеляції. | Профіль особливих потреб, де сигнали погляду не оцінюються. Пресети суворості. Пояснення кожного бала. Мітки «хибне спрацювання» від викладача, що знижують бал і накопичують дані для налаштування. |
-| **Браузери.** Window Management API є лише в Chromium. Safari записує відео в MP4 і має обмеження камери у фоні. На мобільних немає демонстрації екрана. | Частина перевірок не працює всюди. | Офіційна підтримка Chrome і Edge на комп'ютері. Телефон лише як друга камера. Чесна сторінка вимог перед іспитом. |
-| **Слабкі ноутбуки.** На старих Celeron аналіз іде 2–5 кадрів на секунду. | Пропущені короткі події. | Адаптивна частота вже є. Далі: серверний аналіз для слабких пристроїв, легші моделі, WebGPU. |
-| **Довгі відключення світла і мобільний інтернет.** | Втрата частини запису. | Черга в IndexedDB вже переживає перезавантаження і зникнення мережі. Далі: зниження бітрейту при поганому каналі, попередження про квоту сховища. |
-| **ШІ на другому пристрої, навушник, смарт-окуляри.** | Камера ноутбука цього не бачить. | Друга камера збоку, детекція звуку, а головне дизайн завдань: відкриті питання, персональні варіанти, усна співбесіда. |
-| **Ідентифікація за фото студентського квитка.** Фото дрібне і старе; модель face-api не найточніша і може гірше працювати для деяких груп. | Хибні збіги або незбіги. | Дія.Шеринг після договору з Мінцифри. Серверна модель ArcFace. Завжди ручна перевірка, якщо збіг сумнівний. Тестування на різноманітній вибірці. |
+| **The client cannot be fully trusted.** Analysis runs in the student's browser, so a technically skilled student can replace the code or the camera. | Events can be forged or hidden. | The server re-analyzes random frames from the video (sampling audit). Telemetry is checked against the recording. A second camera from a phone. Random "live" checks during the exam. A Safe Exam Browser option for strict exams. |
+| **Virtual cameras and prerecorded video.** | A "clean" video can be shown instead of a live one. | A heuristic based on the device name already exists. Next: random challenges (turn your head, show your fingers), artifact analysis on the server, a second camera. |
+| **Webcam gaze accuracy is limited.** A few degrees at best; worse with glasses, poor lighting, cheap cameras. | It cannot tell "looking at the keyboard" from "looking at a phone next to the keyboard". | Gaze is only one of the signals. Personal calibration, a fallback signal based on head turn, recalibration during the exam. Thresholds should be tuned on labeled pilot data. |
+| **False positives.** Someone is thinking while looking at the ceiling. Someone is neurodivergent. Someone is in a shelter with their family. | Unfair suspicions and appeals. | A special-needs profile where gaze signals are not scored. Strictness presets. An explanation of every score. "False positive" labels from the instructor that lower the score and accumulate data for tuning. |
+| **Browsers.** The Window Management API exists only in Chromium. Safari records video as MP4 and has restrictions on background camera use. Mobile browsers have no screen sharing. | Some checks do not work everywhere. | Official support for Chrome and Edge on desktop. The phone only as a second camera. An honest requirements page before the exam. |
+| **Weak laptops.** On old Celerons the analysis runs at 2-5 frames per second. | Short events are missed. | Adaptive frame rate already exists. Next: server-side analysis for weak devices, lighter models, WebGPU. |
+| **Long power outages and mobile internet.** | Part of the recording is lost. | The IndexedDB queue already survives reloads and network loss. Next: lower bitrate on a poor connection, warnings about storage quota. |
+| **AI on a second device, an earpiece, smart glasses.** | The laptop camera does not see this. | A second camera at the side, sound detection, and above all assignment design: open questions, personalized variants, an oral interview. |
+| **Identification by the photo on a student card.** The photo is small and old; the face-api model is not the most accurate and may perform worse for some groups. | False matches or mismatches. | Diia.Sharing after an agreement with the Ministry of Digital Transformation (Мінцифри). An ArcFace model on the server. Always a manual check if the match is doubtful. Testing on a diverse sample. |
 
-## Безпека і масштаб (прототип vs продукт)
+## Security and scale (prototype vs product)
 
-| Зараз у прототипі | У продукті |
+| In the prototype now | In the product |
 |---|---|
-| Вхід викладача за PIN | SSO університету (Google Workspace / Microsoft 365), ролі, двофакторна автентифікація |
-| SQLite і файли на диску одного сервера | PostgreSQL, об'єктне сховище (S3) з шифруванням, окремі ML-воркери |
-| HTTP у локальній мережі | Лише HTTPS, HSTS, суворі CSP |
-| Немає зовнішнього аудиту | Пентест, журнал доступу до кожного запису, DPIA |
-| Власний простий тест | Інтеграція з Moodle (LTI 1.3 + плагін доступу до тесту) |
+| Instructor login by PIN | University SSO (Google Workspace / Microsoft 365), roles, two-factor authentication |
+| SQLite and files on the disk of one server | PostgreSQL, object storage (S3) with encryption, separate ML workers |
+| HTTP on the local network | HTTPS only, HSTS, strict CSP |
+| No external audit | Pentest, an access log for every recording, DPIA |
+| A simple built-in test | Integration with Moodle (LTI 1.3 + a test access plugin) |
 
-## Правові та організаційні ризики
+## Legal and organizational risks
 
-- **Згода в умовах нерівності сил.** Студент залежить від університету, тому згода може вважатися
-  невільною. Університет має пропонувати альтернативу, наприклад очний іспит. Прототип показує цю
-  опцію на екрані згоди.
-- **Біометричні дані.** Чинний закон «Про захист персональних даних» (2297-VI) і законопроєкт 8153
-  вимагають підстави обробки, мінімізації та строків зберігання. Потрібні Положення університету,
-  повідомлення студентам і DPIA.
-- **Студенти за кордоном.** Для студентів у ЄС може застосовуватися GDPR. Автоматизовані рішення
-  без участі людини заборонені статтею 22, тому рішення завжди приймає викладач.
-- **Регламент ЄС про ШІ (AI Act).** Системи для моніторингу заборонної поведінки студентів під час
-  тестів належать до високоризикових (додаток III, пункт 3). Розпізнавання емоцій в освіті заборонене
-  (стаття 5). Прототип не розпізнає емоцій. Для виходу на ринок ЄС потрібні управління ризиками,
-  журналювання, людський нагляд і технічна документація.
-- **Сканування кімнати.** Суд у США визнав його порушенням приватності (Ogletree v. Cleveland State,
-  2022). У прототипі воно вимкнене за замовчуванням.
+- **Consent under unequal power.** The student depends on the university, so consent may be
+  considered not freely given. The university must offer an alternative, for example an in-person
+  exam. The prototype shows this option on the consent screen.
+- **Biometric data.** The current Law "On Personal Data Protection" (2297-VI) and bill 8153 require a
+  legal basis for processing, minimization and retention periods. A university regulation, notices
+  to students and a DPIA are needed.
+- **Students abroad.** GDPR may apply to students in the EU. Automated decisions without human
+  involvement are prohibited by Article 22, so the instructor always makes the decision.
+- **EU AI Act.** Systems for monitoring prohibited student behavior during tests are classified as
+  high-risk (Annex III, point 3). Emotion recognition in education is prohibited (Article 5). The
+  prototype does not recognize emotions. To enter the EU market it would need risk management,
+  logging, human oversight and technical documentation.
+- **Room scanning.** A US court ruled it a privacy violation (Ogletree v. Cleveland State, 2022). In
+  the prototype it is off by default.
 
-## Що варто перевірити на пілоті
+## What to check in a pilot
 
-1. Частку хибних спрацювань на чесних студентах у реальних умовах.
-2. Чи справді викладач витрачає менше часу на перевірку групи.
-3. Як студенти сприймають систему: опитування після іспиту.
-4. Скільки сесій втрачають запис через техніку чи зв'язок.
+1. The share of false positives among honest students in real conditions.
+2. Whether the instructor really spends less time reviewing a group.
+3. How students perceive the system: a survey after the exam.
+4. How many sessions lose their recording because of hardware or connectivity.

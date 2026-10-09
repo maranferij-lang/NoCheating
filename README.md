@@ -1,64 +1,68 @@
-# NoCheating — доброчесний онлайн-іспит
+# NoCheating: Honest Online Exams
 
-Прототип системи онлайн-прокторингу для українських університетів. Він працює у звичайному браузері
-без встановлення програм і допомагає викладачу перевірити дистанційний іспит. Система не виносить
-вердиктів: вона збирає докази й пояснює, що саме сталося, а рішення приймає людина.
+A prototype online proctoring system for Ukrainian universities. It runs in a regular browser with
+nothing to install and helps an instructor supervise a remote exam. The system does not issue
+verdicts: it collects evidence and explains what happened, and a human makes the decision.
 
-> **Статус: прототип для демонстрації.** Не використовуйте його для реальних іспитів без доопрацювань
-> з розділу [«Слабкі місця»](docs/LIMITATIONS.md).
+> **Status: demo prototype.** Do not use it for real exams without the improvements described in
+> the ["Weaknesses"](docs/LIMITATIONS.md) section.
 
-## Що вміє прототип
+## What the prototype does
 
-**Для студента**
-- Вхід на іспит за кодом, зрозуміла згода з переліком того, що фіксується і чого система не робить.
-- Перевірка пристрою: камера, освітлення, швидкодія, кількість моніторів, мережа, віртуальні камери.
-- Підтвердження особи: перевірка «живості» (поворот голови, моргання) і порівняння обличчя з фото на
-  студентському квитку чи ID-картці.
-- Калібрування погляду за 9 точками.
-- Телефон як друга камера через QR-код (опційно).
-- Іспит з таймером, автозбереженням і кнопкою паузи на час повітряної тривоги чи відключення світла.
-- Запис не губиться при зникненні інтернету: він зберігається в браузері й дозавантажується пізніше.
+**For the student**
+- Joining an exam with a code, and a clear consent screen listing what is recorded and what the
+  system does not do.
+- Device check: camera, lighting, performance, number of monitors, network, virtual cameras.
+- Identity confirmation: a liveness check (head turn, blinking) and a comparison of the face with the
+  photo on a student card or ID card.
+- 9-point gaze calibration.
+- Phone as a second camera via a QR code (optional).
+- An exam with a timer, autosave and a pause button for air raid alerts or power outages.
+- The recording is not lost when the internet drops: it is kept in the browser and uploaded later.
 
-**Для викладача**
-- Створення іспиту з налаштуванням політики суворості.
-- Список студентів, відсортований за рівнем підозри, з поясненням кожного бала.
-- Перегляд наживо: знімки з камер і стрічка подій.
-- Розбір сесії: відео, таймлайн подій, теплова карта погляду, порівняння фото, повідомлення студенту.
-- Мітки «підтверджено» або «хибне спрацювання», рішення, друкований протокол із хешами SHA-256.
+**For the instructor**
+- Creating an exam with a configurable strictness policy.
+- A list of students sorted by suspicion level, with an explanation of each score.
+- Live view: camera snapshots and an event feed.
+- Session review: video, event timeline, gaze heatmap, photo comparison, messages to the student.
+- "Confirmed" and "false positive" labels, decisions, and a printable protocol with SHA-256 hashes.
 
-**Для демонстрації**
-- Сторінка «Лабораторія» показує наживо, що бачить система: сітку обличчя, поворот голови, точку
-  погляду, предмети в кадрі, бал ризику.
-- Демо-іспит із синтетичними сесіями різних сценаріїв, щоб кабінет викладача не був порожнім.
+**For the demo**
+- The "Lab" page (UI name "Лабораторія") shows live what the system sees: the face mesh, head
+  rotation, the gaze point, objects in frame and the risk score.
+- A demo exam with synthetic sessions of different scenarios, so the instructor dashboard is not
+  empty.
 
-## Як працює аналіз
+## How the analysis works
 
-Аналіз відео відбувається **в браузері студента** (MediaPipe і face-api). На сервер ідуть події,
-компактні вимірювання (≈5 на секунду) і стиснене відео шматками по 10 секунд. Сервер повторно
-рахує події з вимірювань, кластеризує погляди поза екран (DBSCAN) і обчислює пояснюваний бал ризику.
-Деталі в [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), продуктовий план у [docs/PLAN.md](docs/PLAN.md).
+Video analysis happens **in the student's browser** (MediaPipe and face-api). The server receives
+events, compact measurements (about 5 per second) and compressed video in 10-second chunks. The
+server recomputes the events from the measurements, clusters off-screen gazes (DBSCAN) and computes
+an explainable risk score.
+Details are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and the product plan is in
+[docs/PLAN.md](docs/PLAN.md).
 
-## Швидкий старт
+## Quick start
 
-Потрібно: **Node.js 22+** і **Chrome або Edge**.
+Requires: **Node.js 22+** and **Chrome or Edge**.
 
 ```bash
-npm install        # також завантажує моделі MediaPipe (~8 МБ)
-npm run dev        # сервер :3001 + вебзастосунок :5173
+npm install        # also downloads the MediaPipe models (~8 MB)
+npm run dev        # server :3001 + web app :5173
 ```
 
-Відкрийте http://localhost:5173.
+Open http://localhost:5173.
 
-| Що | Як |
+| What | How |
 |---|---|
-| Кабінет викладача | http://localhost:5173/proctor, PIN **1234** |
-| Пробний іспит (10 хв) | код **TEST10** на http://localhost:5173/join |
-| Демо-іспит із синтетичними сесіями | код **DEMO26** (у кабінеті викладача) |
-| Лабораторія | http://localhost:5173/lab |
+| Instructor dashboard | http://localhost:5173/proctor, PIN **1234** |
+| Trial exam (10 min) | code **TEST10** at http://localhost:5173/join |
+| Demo exam with synthetic sessions | code **DEMO26** (in the instructor dashboard) |
+| Lab | http://localhost:5173/lab |
 
-Демо-дані створюються автоматично при першому запуску. Повторно: `npm run seed`.
+Demo data is created automatically on first start. To create it again: `npm run seed`.
 
-### Продакшн-режим (один порт)
+### Production mode (single port)
 
 ```bash
 npm run build
@@ -71,48 +75,49 @@ npm start          # http://localhost:3000
 docker compose up --build    # http://localhost:3000
 ```
 
-Змінні середовища: `PORT`, `DATA_DIR` (база і записи), `PROCTOR_PIN`, `PUBLIC_URL` (адреса для
-QR-коду телефона), `SEED_ON_EMPTY=0` (не створювати демо-дані).
+Environment variables: `PORT`, `DATA_DIR` (database and recordings), `PROCTOR_PIN`, `PUBLIC_URL` (the
+address used in the phone QR code), `SEED_ON_EMPTY=0` (do not create demo data).
 
-## Телефон як друга камера
+## Phone as a second camera
 
-Браузер дає доступ до камери лише на `https://` або `localhost`. Тому для телефона потрібна HTTPS-адреса:
+The browser gives access to the camera only on `https://` or `localhost`. So the phone needs an
+HTTPS address:
 
-- **Найпростіше:** безкоштовний тунель Cloudflare. Запустіть `npm run build && npm start`, потім
-  `npx cloudflared tunnel --url http://localhost:3000` і відкривайте видану адресу
-  `https://….trycloudflare.com` на ноутбуці й телефоні.
-- **У локальній мережі:** `npm run dev:https`, відкрийте `https://<IP-ноутбука>:5173` і прийміть
-  попередження про самопідписаний сертифікат.
-- **На хостингу:** Docker-образ на будь-якому сервісі з HTTPS і постійним диском.
+- **Simplest:** a free Cloudflare tunnel. Run `npm run build && npm start`, then
+  `npx cloudflared tunnel --url http://localhost:3000` and open the issued address
+  `https://….trycloudflare.com` on both the laptop and the phone.
+- **On the local network:** `npm run dev:https`, open `https://<laptop-IP>:5173` and accept the
+  self-signed certificate warning.
+- **On a hosting service:** the Docker image on any service with HTTPS and a persistent disk.
 
-## Тести
+## Tests
 
 ```bash
 npm run typecheck
-npm test               # модульні тести ядра і сервера
-npm run fixtures       # створює фейкові відео для камери (потрібен ffmpeg)
-npm run build && npm run test:e2e   # наскрізні тести в Chromium з фейковою камерою
+npm test               # unit tests for the core and the server
+npm run fixtures       # creates fake videos for the camera (requires ffmpeg)
+npm run build && npm run test:e2e   # end-to-end tests in Chromium with a fake camera
 ```
 
-## Структура
+## Structure
 
 ```
-packages/core   спільні типи, аналіз погляду, кластеризація, бал ризику, симулятор сценаріїв
-apps/server     Fastify + SQLite: API, медіа, WebSocket, демо-дані
-apps/web        React: студент, телефон, кабінет викладача, лабораторія
-docs/           план продукту, архітектура, сценарій демонстрації, слабкі місця
-e2e/            наскрізні тести Playwright
+packages/core   shared types, gaze analysis, clustering, risk score, scenario simulator
+apps/server     Fastify + SQLite: API, media, WebSocket, demo data
+apps/web        React: student, phone, instructor dashboard, lab
+docs/           product plan, architecture, demo script, weaknesses
+e2e/            Playwright end-to-end tests
 ```
 
-## Документи
+## Documents
 
-- [docs/DEMO.md](docs/DEMO.md): як показати прототип за 10 хвилин.
-- [docs/LIMITATIONS.md](docs/LIMITATIONS.md): слабкі місця і як їх виправити.
-- [docs/PLAN.md](docs/PLAN.md): детальний план продукту.
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): технічна архітектура.
+- [docs/DEMO.md](docs/DEMO.md): how to show the prototype in 10 minutes.
+- [docs/LIMITATIONS.md](docs/LIMITATIONS.md): weaknesses and how to fix them.
+- [docs/PLAN.md](docs/PLAN.md): the detailed product plan.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): the technical architecture.
 
-## Приватність
+## Privacy
 
-Звук не записується (лише детекція мовлення, якщо її увімкнено). Емоції не розпізнаються. Кімната
-не сканується. Записи без порушень видаляються після строку зберігання. Дані студента можна
-видалити з кабінету викладача.
+Audio is not recorded (only speech detection, if enabled). Emotions are not recognized. The room is
+not scanned. Recordings without violations are deleted after the retention period. A student's data
+can be deleted from the instructor dashboard.
